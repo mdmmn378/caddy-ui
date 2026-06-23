@@ -1,0 +1,309 @@
+.dockerignore
+  s_c232bd01a8f605::t_e67d4d324da2c2 1-15
+package.json
+  s_c232bd01a8f605::t_f9426e46451d2e 18-34
+  s_c232bd01a8f605::t_385e8a222cdb82 40
+  s_c232bd01a8f605::t_fcd794a707bbc1 1-17,53
+  s_c232bd01a8f605::t_e888956d35f32a 35-39,41-47
+  s_c232bd01a8f605::t_51ccd58caa7e98 48-52
+app/components/app/PageHeader.vue
+  s_c232bd01a8f605::t_210096eb0acfad 1-15
+app/components/ui/table/TableHeader.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-12
+app/components/ui/dialog/DialogTitle.vue
+  s_c232bd01a8f605::t_bacc789d8e1659 1-19
+app/components/ui/table/Table.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-17
+app/components/ui/card/CardTitle.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-12
+app/components/ui/dropdown-menu/DropdownMenuGroup.vue
+  s_c232bd01a8f605::t_d1a6e130d9dce9 1-11
+app/components/app/StatCard.vue
+  s_c232bd01a8f605::t_210096eb0acfad 1-24
+app/components/ui/select/SelectValue.vue
+  s_c232bd01a8f605::t_b49a1afae52a3a 1-11
+app/components/ui/button/Button.vue
+  s_c232bd01a8f605::t_f78695c235f5d2 1-24
+app/components/ui/select/SelectItem.vue
+  s_c232bd01a8f605::t_b49a1afae52a3a 1-39
+app/layouts/default.vue
+  s_c232bd01a8f605::t_9d2693dd9e9530 1-34,38-56,58-77
+  s_c232bd01a8f605::t_63cb7eec11bdd1 35-37,57
+app/components/ui/switch/Switch.vue
+  s_c232bd01a8f605::t_2652637a75db79 1-33
+components.json
+  s_c232bd01a8f605::t_d4cd80d203bf33 1-21
+app/components/ui/tooltip/TooltipContent.vue
+  s_c232bd01a8f605::t_cd13b636822807 4
+  s_c232bd01a8f605::t_2652637a75db79 1-3,5-33
+app/components/ui/dialog/DialogClose.vue
+  s_c232bd01a8f605::t_bacc789d8e1659 1-11
+app/components/ui/tabs/TabsList.vue
+  s_c232bd01a8f605::t_2652637a75db79 1-24
+.prettierrc.json
+  s_c232bd01a8f605::t_04b6227bc7dbc3 1-8
+app/components/ui/alert/index.ts
+  s_c232bd01a8f605::t_a3e5d4a0b5cc40 1-21
+app/components/ui/textarea/Textarea.vue
+  s_c232bd01a8f605::t_f78695c235f5d2 1-31
+app/components/ui/card/index.ts
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-7
+.vscode/extensions.json
+  s_c232bd01a8f605::t_cdf1ab07612496 1-9
+app/lib/caddy/types.ts
+  s_c232bd01a8f605::t_387ec97a95e1f4 1-199
+app/composables/useCaddy.ts
+  s_c232bd01a8f605::t_a5861a23bbd1cf 107-115,118-130,132,134-144,148-150,154-155,167-181,185-186
+  s_c232bd01a8f605::t_ddaa2189d22f65 1-11,16-106,116-117,131,133,145-146,151-153,156-166,182-184,187-215
+  s_c232bd01a8f605::t_26786316bd9ee1 12-15
+  s_c232bd01a8f605::t_63cb7eec11bdd1 147
+app/components/ui/sonner/index.ts
+  s_c232bd01a8f605::t_2652637a75db79 1
+app/components/ui/tabs/TabsContent.vue
+  s_c232bd01a8f605::t_2652637a75db79 1-19
+app/components/ui/table/TableBody.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-12
+app/components/ui/table/TableHead.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-20
+app/components/ui/dialog/DialogHeader.vue
+  s_c232bd01a8f605::t_bacc789d8e1659 1-15
+app/components/ui/badge/index.ts
+  s_c232bd01a8f605::t_a3e5d4a0b5cc40 1-24
+app/components/ui/dialog/Dialog.vue
+  s_c232bd01a8f605::t_bacc789d8e1659 1-13
+app/components/ui/skeleton/Skeleton.vue
+  s_c232bd01a8f605::t_a3e5d4a0b5cc40 1-10
+app/components/ui/dialog/DialogOverlay.vue
+  s_c232bd01a8f605::t_bacc789d8e1659 1-24
+app/components/ui/alert/AlertDescription.vue
+  s_c232bd01a8f605::t_a3e5d4a0b5cc40 1-20
+app/components/ui/tabs/TabsTrigger.vue
+  s_c232bd01a8f605::t_2652637a75db79 1-25
+.gitignore
+  s_c232bd01a8f605::t_c397ab282fadaa 1-35
+tsconfig.json
+  s_c232bd01a8f605::t_3d4645e4fcee8a 1-10
+app/components/ui/tooltip/Tooltip.vue
+  s_c232bd01a8f605::t_2652637a75db79 1-16
+app/components/ui/alert/Alert.vue
+  s_c232bd01a8f605::t_a3e5d4a0b5cc40 1-13
+app/components/ui/tooltip/TooltipTrigger.vue
+  s_c232bd01a8f605::t_2652637a75db79 1-12
+app/components/ui/dropdown-menu/DropdownMenuContent.vue
+  s_c232bd01a8f605::t_d1a6e130d9dce9 1-37
+app/components/ui/table/TableCaption.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-12
+app/components/app/ConnectionStatus.vue
+  s_c232bd01a8f605::t_1c6f79e8bd3870 1-19,21-31
+  s_c232bd01a8f605::t_63cb7eec11bdd1 20
+app/components/ui/skeleton/index.ts
+  s_c232bd01a8f605::t_a3e5d4a0b5cc40 1
+app/components/ui/select/index.ts
+  s_c232bd01a8f605::t_b49a1afae52a3a 1-8
+app/assets/css/tailwind.css
+  s_c232bd01a8f605::t_d0627899c64e20 1-123
+app/components/ui/select/SelectGroup.vue
+  s_c232bd01a8f605::t_b49a1afae52a3a 1-15
+app/components/app/ConfirmDialog.vue
+  s_c232bd01a8f605::t_210096eb0acfad 1,10-41
+  s_c232bd01a8f605::t_63cb7eec11bdd1 2-9
+app/components/ui/table/TableEmpty.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-18
+app/components/ui/alert/AlertTitle.vue
+  s_c232bd01a8f605::t_a3e5d4a0b5cc40 1-15
+app/components/ui/select/Select.vue
+  s_c232bd01a8f605::t_b49a1afae52a3a 1-13
+app/components/ui/input/index.ts
+  s_c232bd01a8f605::t_f78695c235f5d2 1
+eslint.config.mjs
+  s_c232bd01a8f605::t_d8ef2e646b8d60 8-9,11-12
+  s_c232bd01a8f605::t_4a48dcc2b07a40 1-7,10,13-18
+app/components/ui/tooltip/TooltipProvider.vue
+  s_c232bd01a8f605::t_2652637a75db79 1-11
+app/components/ui/select/SelectLabel.vue
+  s_c232bd01a8f605::t_b49a1afae52a3a 1-19
+app/pages/config.vue
+  s_c232bd01a8f605::t_63cb7eec11bdd1 74-76,78-80,92-94
+  s_c232bd01a8f605::t_6c5ce1a8f643eb 1-73,77,81-91,95-113
+app/pages/index.vue
+  s_c232bd01a8f605::t_63cb7eec11bdd1 88-90,103-105,111-113,119-121
+  s_c232bd01a8f605::t_b2bd56cf477e80 1-87,91-102,106-110,114-118,122-141
+app/components/ui/input/Input.vue
+  s_c232bd01a8f605::t_f78695c235f5d2 1-34
+app/components/ui/table/TableCell.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-20
+app/components/ui/card/Card.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-12
+app/components/ui/dropdown-menu/DropdownMenuTrigger.vue
+  s_c232bd01a8f605::t_d1a6e130d9dce9 1-12
+app/components/ui/select/SelectTrigger.vue
+  s_c232bd01a8f605::t_b49a1afae52a3a 1-33
+app/components/app/RedirectDialog.vue
+  s_c232bd01a8f605::t_ed02b85b842f1b 22
+  s_c232bd01a8f605::t_b2cb978af37afd 46
+  s_c232bd01a8f605::t_19f2b64c833341 21
+  s_c232bd01a8f605::t_63cb7eec11bdd1 103-105,139-141
+  s_c232bd01a8f605::t_826390bfdbb3a2 1-20,23-45,47-102,106-138,142-155
+app/pages/routes/index.vue
+  s_c232bd01a8f605::t_5ca7f40ab61bfd 1-131,138,147-167
+  s_c232bd01a8f605::t_63cb7eec11bdd1 132-137,139-146
+app/pages/servers/index.vue
+  s_c232bd01a8f605::t_63cb7eec11bdd1 95-97
+  s_c232bd01a8f605::t_eb1f4aaee35ab0 1-94,98-124
+lefthook.yml
+  s_c232bd01a8f605::t_17a58c4429a404 1-17
+app/components/ui/dialog/index.ts
+  s_c232bd01a8f605::t_bacc789d8e1659 1-9
+app/components/app/ServerDialog.vue
+  s_c232bd01a8f605::t_f72a6d0f3b05cd 1-94
+.prettierignore
+  s_c232bd01a8f605::t_bb23773596315a 1-9
+app/components/app/RowActions.vue
+  s_c232bd01a8f605::t_a3c95d6b1f3285 1-35
+app/components/ui/sonner/Sonner.vue
+  s_c232bd01a8f605::t_77c6512aedd447 12
+  s_c232bd01a8f605::t_2652637a75db79 1-11,13-20
+app/components/ui/separator/Separator.vue
+  s_c232bd01a8f605::t_a3e5d4a0b5cc40 1-22
+app/components/ui/card/CardAction.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-12
+app/components/ui/dropdown-menu/DropdownMenuSeparator.vue
+  s_c232bd01a8f605::t_d1a6e130d9dce9 1-17
+app/components/app/EmptyState.vue
+  s_c232bd01a8f605::t_210096eb0acfad 1-23
+app/components/ui/badge/Badge.vue
+  s_c232bd01a8f605::t_a3e5d4a0b5cc40 1-22
+app/components/ui/switch/index.ts
+  s_c232bd01a8f605::t_2652637a75db79 1
+app/components/ui/card/CardContent.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-12
+app/components/app/SiteDialog.vue
+  s_c232bd01a8f605::t_63cb7eec11bdd1 118-122,155-157
+  s_c232bd01a8f605::t_d370c071d1c4b8 1-21,24-117,123-154,158-171
+  s_c232bd01a8f605::t_377ff37aa91aca 22-23
+app/components/ui/button/index.ts
+  s_c232bd01a8f605::t_f78695c235f5d2 1-30
+app/components/ui/dialog/DialogContent.vue
+  s_c232bd01a8f605::t_bacc789d8e1659 1-43
+app/components/ui/dialog/DialogFooter.vue
+  s_c232bd01a8f605::t_bacc789d8e1659 1-15
+Taskfile.yml
+  s_c232bd01a8f605::t_b1fd8bfd94b66c 1-89
+app/components/ui/card/CardHeader.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-12
+app/components/ui/table/TableRow.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-20
+app/pages/gateways/index.vue
+  s_c232bd01a8f605::t_63cb7eec11bdd1 95-100,110-114
+  s_c232bd01a8f605::t_4a321da67b1f3b 1-94,101-109,115-133
+app/components/ui/label/index.ts
+  s_c232bd01a8f605::t_f78695c235f5d2 1
+app/components/ui/table/TableFooter.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-15
+app/components/ui/card/CardFooter.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-12
+app/pages/sites/index.vue
+  s_c232bd01a8f605::t_63cb7eec11bdd1 55,91-96,98-105
+  s_c232bd01a8f605::t_46c8c33edc5518 1-54,56-90,97,106-124
+.env.example
+  s_c232bd01a8f605::t_0644c2a10d8801 1-6
+app/lib/caddy/builders.ts
+  s_c232bd01a8f605::t_c8554ea0f916a5 152-161
+  s_c232bd01a8f605::t_8edf06af74abad 1-151,162-231
+app/components/ui/tabs/index.ts
+  s_c232bd01a8f605::t_2652637a75db79 1-4
+app/components/ui/dropdown-menu/DropdownMenu.vue
+  s_c232bd01a8f605::t_d1a6e130d9dce9 1-13
+app/components/app/ThemeToggle.vue
+  s_c232bd01a8f605::t_0a8434a1a3928b 1-24
+app/components/ui/label/Label.vue
+  s_c232bd01a8f605::t_f78695c235f5d2 1-24
+app/components/ui/tooltip/index.ts
+  s_c232bd01a8f605::t_2652637a75db79 1-4
+app/components/ui/dialog/DialogTrigger.vue
+  s_c232bd01a8f605::t_bacc789d8e1659 1-12
+.github/workflows/ci.yml
+  s_c232bd01a8f605::t_da9d2a6efcd586 1-40
+app/lib/caddy/client.ts
+  s_c232bd01a8f605::t_b0a393d8f0cb8b 41,50,59
+  s_c232bd01a8f605::t_755e65eb443673 1-18,20-23,25-32,34-37,39-40,42-46,48-49,51-55,57-58,60-64,66-69,71-74,76-79
+  s_c232bd01a8f605::t_b1a38c04b31971 19,24,33,38,47,56,65,70,75
+README.md
+  s_c232bd01a8f605::t_b89e7e02f9bbdd 1-44,61-114,123-142
+  s_c232bd01a8f605::t_4d1ae32c5b2e78 45-60
+  s_c232bd01a8f605::t_63cb7eec11bdd1 115-122
+app/components/ui/textarea/index.ts
+  s_c232bd01a8f605::t_f78695c235f5d2 1
+app/components/ui/tabs/Tabs.vue
+  s_c232bd01a8f605::t_2652637a75db79 1-21
+app/components/ui/dropdown-menu/DropdownMenuItem.vue
+  s_c232bd01a8f605::t_d1a6e130d9dce9 1-29
+app/components/ui/dropdown-menu/DropdownMenuLabel.vue
+  s_c232bd01a8f605::t_d1a6e130d9dce9 1-20
+app/components/ui/dropdown-menu/index.ts
+  s_c232bd01a8f605::t_d1a6e130d9dce9 1-7
+app/components/ui/separator/index.ts
+  s_c232bd01a8f605::t_a3e5d4a0b5cc40 1
+app/components/ui/select/SelectContent.vue
+  s_c232bd01a8f605::t_b49a1afae52a3a 1-49
+app/components/ui/select/SelectSeparator.vue
+  s_c232bd01a8f605::t_b49a1afae52a3a 1-17
+app/components/app/KindBadge.vue
+  s_c232bd01a8f605::t_63cb7eec11bdd1 7-10
+  s_c232bd01a8f605::t_210096eb0acfad 1-6,11-23
+app/components/app/FormField.vue
+  s_c232bd01a8f605::t_63cb7eec11bdd1 7
+  s_c232bd01a8f605::t_066468cb50dd74 1-6,8-14
+caddy/Caddyfile
+  s_c232bd01a8f605::t_23dfe62b004954 7-10,12-14
+  s_c232bd01a8f605::t_b9f59fcdea09ff 1-6,11,15-21
+docker-compose.yml
+  s_c232bd01a8f605::t_3387e59fbdfc37 1-30
+app/components/ui/table/index.ts
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-9
+app/lib/utils.ts
+  s_c232bd01a8f605::t_6f272b9d8e5474 1-14
+app/components/ui/card/CardDescription.vue
+  s_c232bd01a8f605::t_edd17bd1b06a63 1-12
+server/api/caddy/[...path].ts
+  s_c232bd01a8f605::t_b128c93fd4f521 4-8,10,19-23,69-70,82-83,91,93,99-103,105,107-116,120-121,124
+  s_c232bd01a8f605::t_b1560d3479ba6d 47-51,55
+  s_c232bd01a8f605::t_0e6eadf9e21c1d 57
+  s_c232bd01a8f605::t_e357fe997d47ea 98
+  s_c232bd01a8f605::t_84590bd5524874 1-3,9,11-18,24-27,29,37-46,52-54,56,58-66,84-90,92,104,106,117,122-123
+  s_c232bd01a8f605::t_40ce37c5a33028 94-97
+  s_c232bd01a8f605::t_910282e6c95585 28,30-36
+  s_c232bd01a8f605::t_a67307acb4736f 67-68,71-81
+  s_c232bd01a8f605::t_9f9a0d5a1d59d0 118-119
+app/components/app/GatewayDialog.vue
+  s_c232bd01a8f605::t_63cb7eec11bdd1 15-21,126-130,143-147,173-175,186-188
+  s_c232bd01a8f605::t_4282b25d514f9f 1-14,22,25-125,131-142,148-172,176-185,189-202
+  s_c232bd01a8f605::t_30e4921b0e9e2d 23-24
+nuxt.config.ts
+  s_c232bd01a8f605::t_d01b57db99001f 1-9,11-58
+  s_c232bd01a8f605::t_1eb8079bfb0a30 10
+app/app.vue
+  s_c232bd01a8f605::t_5d40d9708e281f 1-13
+.editorconfig
+  s_c232bd01a8f605::t_7c9e5828d27163 1-12
+app/components/ui/dialog/DialogDescription.vue
+  s_c232bd01a8f605::t_bacc789d8e1659 1-19
+Dockerfile
+  s_c232bd01a8f605::t_bdf22720afc12f 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "7c225eef97732d63e9b0dac321987d909308d1ea",
+  "prompts": {},
+  "sessions": {
+    "s_c232bd01a8f605": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "420a878e-fc48-494a-a157-eb4b0cef0a2a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Mamunur Rahamn Mamun <mdmmn378@gmail.com>"
+    }
+  }
+}
