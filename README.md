@@ -1,29 +1,71 @@
 # Caddy UI
 
-An admin UI for configuring [Caddy](https://caddyserver.com) through its
+A clean admin UI for configuring [Caddy](https://caddyserver.com) through its
 [Admin API](https://caddyserver.com/docs/api). Manage **API gateways** (reverse
-proxies), **static sites** (file servers), **redirects**, **routes**, and
-**servers** — without hand-editing JSON.
+proxies), **static sites** (file servers), **redirects**, **routes** and
+**servers** from the browser — no hand-editing JSON.
 
-Built with **Nuxt 4** (Vue 3 `<script setup>` composition API), **Bun**,
-**Tailwind CSS v4**, and **shadcn-vue** (reka-ui).
+Built with **Nuxt 4** (Vue 3 `<script setup>`), **Bun**, **Tailwind CSS v4** and
+**shadcn-vue**. Changes are applied to Caddy live, with zero-downtime reloads.
 
-> **Note on Nuxt version:** this scaffold uses Nuxt 4, the current stable release.
-> It is the direct successor to Nuxt 3 and uses the identical Vue 3 composition
-> API; the only notable change is the `app/` source directory.
+![CI](https://github.com/mdmmn378/caddy-ui/actions/workflows/ci.yml/badge.svg)
+![Docker](https://github.com/mdmmn378/caddy-ui/actions/workflows/docker-publish.yml/badge.svg)
+[![Docker Hub](https://img.shields.io/badge/docker%20hub-mdmmn378%2Fcaddy--ui-blue?logo=docker)](https://hub.docker.com/r/mdmmn378/caddy-ui)
 
 ---
 
+## Quick start (Docker — recommended)
+
+Runs a self-contained stack: Caddy + this UI, already wired together.
+
+```bash
+git clone https://github.com/mdmmn378/caddy-ui.git
+cd caddy-ui
+docker compose up
+```
+
+Then open **<http://localhost:2020>** — the header should show **Connected**.
+This pulls the prebuilt image from Docker Hub (`mdmmn378/caddy-ui`), so there's
+nothing to build.
+
+> Port `2020` is used on purpose (next to Caddy's `2019`) to avoid clashing with
+> the usual `3000`/`8080` dev ports. Override with `UI_PORT`.
+
+### Drive an existing Caddy instead of the bundled one
+
+Point the UI at any Caddy admin endpoint and skip the bundled Caddy:
+
+```bash
+CADDY_ADMIN_URL=http://host.docker.internal:2019 docker compose up caddy-ui
+```
+
+## Quick start (local dev)
+
+Requires [Bun](https://bun.sh) ≥ 1.3 and a reachable Caddy admin endpoint
+(default `http://localhost:2019`, on by default in Caddy).
+
+```bash
+bun install
+cp .env.example .env       # optional: set NUXT_CADDY_ADMIN_URL
+bun run dev                # http://localhost:3000
+```
+
+Or with [Task](https://taskfile.dev): `task setup && task dev`.
+
 ## Features
 
-- **Dashboard** — at-a-glance counts of gateways, sites, redirects and servers, plus recent routes.
-- **API Gateways** — reverse-proxy a host/path to one or more upstreams, with load-balancing policy, path-prefix stripping, active health checks and Host-header preservation.
-- **Static Sites** — serve files from disk with index files, directory browsing and compression.
-- **Redirects** — 301/302/307/308 redirects via `static_response`.
-- **Routes** — every route across all servers in evaluation order, edited by type.
+- **Dashboard** — counts of gateways/sites/redirects/servers and recent routes.
+- **API Gateways** — reverse-proxy a host/path to one or more upstreams, with
+  load-balancing policy, path-prefix stripping, active health checks and
+  Host-header preservation.
+- **Static Sites** — file server with index files, directory browsing and
+  compression.
+- **Redirects** — 301/302/307/308 via `static_response`.
+- **Routes** — every route across all servers, in evaluation order, edited by type.
 - **Servers** — manage listen addresses.
-- **Raw Config** — view and atomically apply the full Caddy JSON (`POST /load`).
-- Light/dark theme, toast notifications, fully typed Caddy config model.
+- **Raw Config** — view and atomically apply the full Caddy JSON.
+- Reads existing configs (including `subroute`-wrapped handlers), light/dark
+  theme, toast notifications and a fully-typed Caddy config model.
 
 ## How it works
 
@@ -33,81 +75,71 @@ Browser ──▶ Nuxt (Nitro) ──▶ /api/caddy/** proxy ──▶ Caddy Adm
 
 The browser never talks to Caddy directly. A Nitro server route
 (`server/api/caddy/[...path].ts`) forwards requests to the Caddy admin endpoint
-**server-side**, which:
+**server-side**. This:
 
 - avoids CORS entirely, and
-- strips the browser `Origin`/`Host` headers that Caddy's admin endpoint rejects
-  as DNS-rebinding protection.
+- sends a plain, trusted request — `fetch()`'s `Sec-Fetch-*`/`Origin` headers
+  would otherwise trip Caddy's DNS-rebinding protection (`403 origin ''`).
 
-The admin endpoint URL is configured with `NUXT_CADDY_ADMIN_URL` (default
-`http://localhost:2019`) and is only ever read on the server.
+The admin URL is read **only on the server** via `NUXT_CADDY_ADMIN_URL`.
 
-### Following the Admin API
+### Faithful to the Admin API
 
-Mutations use the granular [config traversal endpoints](https://caddyserver.com/docs/api)
-rather than rewriting the whole config:
+Mutations use the granular [config traversal endpoints](https://caddyserver.com/docs/api),
+not whole-config rewrites:
 
-- **Add route** → `POST /config/.../routes` (POST appends to an array)
-- **Edit route** → `PATCH /config/.../routes/{index}` (replaces one element)
-- **Delete route** → `DELETE /config/.../routes/{index}`
-- **Create server** → `PUT /config/apps/http/servers/{name}` (PUT strictly creates)
-- **Raw editor** → `POST /load` (atomic full-config replace)
+| Action        | Request                                            |
+| ------------- | -------------------------------------------------- |
+| Add route     | `POST /config/.../routes` (POST appends to arrays) |
+| Edit route    | `PATCH /config/.../routes/{index}`                 |
+| Delete route  | `DELETE /config/.../routes/{index}`                |
+| Create server | `PUT /config/apps/http/servers/{name}`             |
+| Raw editor    | `POST /load` (atomic full replace)                 |
 
-`POST /load` is used only by the Raw Config page and to bootstrap structure that
-doesn't exist yet. The proxy forwards the `If-Match` / `Cache-Control` request
-headers and surfaces the `Etag` response header, so the Etag-based optimistic
-concurrency from the docs works end-to-end (a stale `If-Match` returns `412`).
+The proxy also forwards `If-Match` / `Cache-Control` and surfaces the `Etag`
+response header, so the docs' Etag-based optimistic concurrency works end-to-end
+(a stale `If-Match` returns `412`).
 
-## Requirements
+## Good to know
 
-- [Bun](https://bun.sh) ≥ 1.3
-- A running Caddy instance with the Admin API enabled (it is on by default at `localhost:2019`)
-- Optional: [Task](https://taskfile.dev) and [lefthook](https://lefthook.dev) for tooling
+- **No restart needed.** Saving applies immediately via Caddy's graceful reload.
+  Invalid config is rejected and rolled back (the error shows in a toast). Caddy
+  also auto-persists the new config to disk.
+- **Static sites serve files from where _Caddy_ runs**, not from your browser's
+  machine. If Caddy is on a remote host, the site root must exist and be readable
+  **on that host** by Caddy's user. A `403` from a `file_server` almost always
+  means Caddy's user can't traverse/read the root directory (e.g. a `0750` home
+  directory) — serve from a path like `/var/www/...` or grant access.
+- **HTTPS for a new public host** is provisioned on demand: the route is live
+  instantly, but the first request to a brand-new domain may take a few seconds
+  while Caddy obtains a certificate (DNS must point at the server; ports 80/443
+  reachable). Local/internal hosts skip this.
 
-## Quick start
+## Configuration
 
-```bash
-# 1. Install deps + git hooks
-task setup            # or: bun install && bunx lefthook install
+| Env var                | Default                 | Description                             |
+| ---------------------- | ----------------------- | --------------------------------------- |
+| `NUXT_CADDY_ADMIN_URL` | `http://localhost:2019` | Caddy admin endpoint (server-side only) |
+| `NUXT_PUBLIC_APP_NAME` | `Caddy UI`              | App name shown in the UI                |
 
-# 2. Configure the Caddy admin endpoint (optional; defaults to localhost:2019)
-cp .env.example .env
-
-# 3. Run the dev server
-task dev              # or: bun run dev
-```
-
-Open <http://localhost:3000>. If Caddy is running, the header shows
-**Connected**.
-
-### Run with Docker (Caddy + UI together)
-
-```bash
-docker compose up --build
-```
-
-- UI: <http://localhost:3000>
-- Caddy: ports 80/443 published; the admin API (`:2019`) stays on the internal
-  compose network and is reachable by the UI at `http://caddy:2019`.
+Compose-only overrides: `UI_PORT` (default `2020`), `CADDY_ADMIN_URL`,
+`CADDY_UI_IMAGE`, `APP_NAME`.
 
 ## Project structure
 
 ```
 app/
-  assets/css/tailwind.css     # Tailwind v4 + shadcn theme tokens
-  components/
-    ui/                       # shadcn-vue components (button, card, dialog, …)
-    app/                      # app components (dialogs, page header, etc.)
-  composables/useCaddy.ts     # reactive store + CRUD actions
+  components/ui/              # shadcn-vue components
+  components/app/             # app components (dialogs, page header, …)
+  composables/useCaddy.ts     # reactive store + granular CRUD actions
   layouts/default.vue         # sidebar shell
   lib/caddy/
     types.ts                  # typed Caddy JSON config model
     client.ts                 # low-level Admin API client
-    builders.ts               # build/classify/summarize routes
+    builders.ts               # build / classify / summarize routes
   pages/                      # dashboard, gateways, sites, routes, servers, config
-server/
-  api/caddy/[...path].ts      # Nitro proxy to the Caddy Admin API
-caddy/Caddyfile               # local dev Caddy config (admin enabled)
+server/api/caddy/[...path].ts # Nitro proxy to the Caddy Admin API
+caddy/Caddyfile               # bundled-Caddy config for the compose stack
 ```
 
 ## Scripts
@@ -121,20 +153,40 @@ caddy/Caddyfile               # local dev Caddy config (admin enabled)
 | `bun run lint`      | ESLint                       |
 | `bun run format`    | Prettier write               |
 
-Or via Task: `task dev`, `task build`, `task check` (format + lint + typecheck), `task --list`.
+Via Task: `task dev`, `task build`, `task check` (format + lint + typecheck),
+`task --list`.
+
+## Building the image yourself
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.build.yml up --build
+```
+
+## Publishing (maintainers)
+
+`.github/workflows/docker-publish.yml` builds a multi-arch image
+(`linux/amd64`, `linux/arm64`) and pushes to `mdmmn378/caddy-ui` on every push
+to `master` (tagged `latest` + short SHA) and on `v*` tags (semver tags).
+
+It requires two repository secrets:
+
+- `DOCKERHUB_USERNAME` — your Docker Hub username (`mdmmn378`)
+- `DOCKERHUB_TOKEN` — a Docker Hub [access token](https://hub.docker.com/settings/security)
 
 ## Tooling
 
-- **Task** (`Taskfile.yml`) — task runner front-end for common commands.
-- **lefthook** (`lefthook.yml`) — pre-commit (eslint + prettier on staged files) and pre-push (typecheck).
-- **GitHub Actions** (`.github/workflows/ci.yml`) — install, prepare, format check, lint, typecheck, build.
-- **ESLint** (`@nuxt/eslint`) and **Prettier**.
+- **Task** (`Taskfile.yml`) — task runner for common commands.
+- **lefthook** (`lefthook.yml`) — pre-commit (eslint + prettier on staged files),
+  pre-push (typecheck).
+- **GitHub Actions** — `ci.yml` (lint/typecheck/build) and `docker-publish.yml`.
+- **ESLint** + **Prettier**.
 
 ## Security notes
 
-- Never expose the Caddy admin API (`:2019`) to untrusted networks. Keep it on
-  loopback or an internal network, and put authentication in front of this UI if
-  you deploy it.
+- Never expose Caddy's admin API (`:2019`) to untrusted networks. Keep it on
+  loopback or an internal network. The compose stack does **not** publish `:2019`.
+- This UI has no authentication. Don't expose it publicly without putting auth in
+  front of it (e.g. behind Caddy with `basic_auth` or an auth gateway).
 - "Apply" on the Raw Config page replaces the **entire** running configuration.
 
 ## License

@@ -1,3 +1,20 @@
+# Self-contained stack: Caddy + Caddy UI.
+#
+#   docker compose up
+#
+# This pulls the prebuilt public image (mdmmn378/caddy-ui) — no build step
+# needed. Then open http://localhost:2020 and the UI is already wired to the
+# bundled Caddy ("Connected").
+#
+# Useful overrides (env vars):
+#   UI_PORT          host port for the UI            (default 2020)
+#   CADDY_UI_IMAGE   image/tag to run                (default mdmmn378/caddy-ui:latest)
+#   CADDY_ADMIN_URL  drive an EXISTING Caddy instead of the bundled one,
+#                    e.g. CADDY_ADMIN_URL=http://host.docker.internal:2019
+#
+# Building from source instead of pulling:
+#   docker compose -f docker-compose.yml -f docker-compose.build.yml up --build
+
 services:
   caddy:
     image: caddy:2-alpine
@@ -6,24 +23,44 @@ services:
     ports:
       - '80:80'
       - '443:443'
-      # NOTE: the admin API (:2019) is intentionally NOT published to the host.
-      # Only caddy-ui can reach it over the internal network.
+      # The admin API (:2019) is intentionally NOT published to the host — only
+      # the caddy-ui service reaches it over the internal compose network.
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:2019/config/']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
 
   caddy-ui:
-    build: .
+    image: ${CADDY_UI_IMAGE:-mdmmn378/caddy-ui:latest}
     container_name: caddy-ui
     restart: unless-stopped
     environment:
-      NUXT_CADDY_ADMIN_URL: http://caddy:2019
-      NUXT_PUBLIC_APP_NAME: Caddy UI
+      # Defaults to the bundled Caddy; override with CADDY_ADMIN_URL.
+      NUXT_CADDY_ADMIN_URL: ${CADDY_ADMIN_URL:-http://caddy:2019}
+      NUXT_PUBLIC_APP_NAME: ${APP_NAME:-Caddy UI}
     ports:
-      - '3000:3000'
+      - '${UI_PORT:-2020}:3000'
     depends_on:
-      - caddy
+      caddy:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'bun',
+          '-e',
+          "fetch('http://localhost:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
 
 volumes:
   caddy_data:
