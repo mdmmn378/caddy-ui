@@ -3,6 +3,8 @@ version: '3'
 
 vars:
   PM: bun
+  IMAGE: mdmmn378/caddy-ui
+  PLATFORMS: linux/amd64,linux/arm64
 
 tasks:
   default:
@@ -87,3 +89,26 @@ tasks:
     desc: Remove build artifacts and caches
     cmds:
       - rm -rf .nuxt .output .nitro .cache dist node_modules/.cache
+
+  docker:login:
+    desc: Log in to Docker Hub
+    cmds:
+      - 'docker login -u {{.IMAGE | splitList "/" | first}}'
+
+  docker:build:
+    desc: 'Build the Docker image locally (current arch). Override tag: TAG=v1.2.3'
+    vars:
+      TAG: '{{.TAG | default "latest"}}'
+    cmds:
+      - 'docker build -t {{.IMAGE}}:{{.TAG}} .'
+
+  docker:push:
+    desc: 'Build a multi-arch image and push it to Docker Hub (tags: latest + short SHA)'
+    vars:
+      TAG: '{{.TAG | default "latest"}}'
+      SHA:
+        sh: git rev-parse --short HEAD 2>/dev/null || echo local
+    cmds:
+      # Ensure a Buildx builder capable of multi-platform builds exists.
+      - docker buildx inspect caddy-ui-builder >/dev/null 2>&1 || docker buildx create --name caddy-ui-builder --driver docker-container
+      - 'docker buildx build --builder caddy-ui-builder --platform {{.PLATFORMS}} -t {{.IMAGE}}:{{.TAG}} -t {{.IMAGE}}:{{.SHA}} --push .'

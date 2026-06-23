@@ -1,67 +1,43 @@
-# Self-contained stack: Caddy + Caddy UI.
+# Runs ONLY the Caddy UI, on the host network.
 #
 #   docker compose up
 #
-# This pulls the prebuilt public image (mdmmn378/caddy-ui) — no build step
-# needed. Then open http://localhost:2020 and the UI is already wired to the
-# bundled Caddy ("Connected").
+# Host networking means the container shares the host's network namespace, so:
+#   - it reaches a Caddy already running on the host at http://localhost:2019
+#   - the UI binds directly to host port 2020 (no port mapping)
 #
-# Useful overrides (env vars):
-#   UI_PORT          host port for the UI            (default 2020)
-#   CADDY_UI_IMAGE   image/tag to run                (default mdmmn378/caddy-ui:latest)
-#   CADDY_ADMIN_URL  drive an EXISTING Caddy instead of the bundled one,
-#                    e.g. CADDY_ADMIN_URL=http://host.docker.internal:2019
+# Open http://localhost:2020. Pulls the prebuilt public image — nothing to build.
 #
-# Building from source instead of pulling:
+# Overrides (env vars):
+#   UI_PORT          host port the UI binds         (default 2020)
+#   CADDY_ADMIN_URL  Caddy admin endpoint           (default http://localhost:2019)
+#   CADDY_UI_IMAGE   image/tag to run               (default mdmmn378/caddy-ui:latest)
+#
+# NOTE: network_mode: host is a Linux feature. Build from source with:
 #   docker compose -f docker-compose.yml -f docker-compose.build.yml up --build
 
 services:
-  caddy:
-    image: caddy:2-alpine
-    container_name: caddy
-    restart: unless-stopped
-    ports:
-      - '80:80'
-      - '443:443'
-      # The admin API (:2019) is intentionally NOT published to the host — only
-      # the caddy-ui service reaches it over the internal compose network.
-    volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    healthcheck:
-      test: ['CMD', 'wget', '-qO-', 'http://localhost:2019/config/']
-      interval: 5s
-      timeout: 3s
-      retries: 5
-      start_period: 5s
-
   caddy-ui:
     image: ${CADDY_UI_IMAGE:-mdmmn378/caddy-ui:latest}
     container_name: caddy-ui
     restart: unless-stopped
+    network_mode: host
     environment:
-      # Defaults to the bundled Caddy; override with CADDY_ADMIN_URL.
-      NUXT_CADDY_ADMIN_URL: ${CADDY_ADMIN_URL:-http://caddy:2019}
+      # With host networking, the host's Caddy is reachable at localhost.
+      NUXT_CADDY_ADMIN_URL: ${CADDY_ADMIN_URL:-http://localhost:2019}
       NUXT_PUBLIC_APP_NAME: ${APP_NAME:-Caddy UI}
-    ports:
-      - '${UI_PORT:-2020}:3000'
-    depends_on:
-      caddy:
-        condition: service_healthy
+      # Nitro binds this port directly on the host (no published-ports mapping).
+      NITRO_PORT: ${UI_PORT:-2020}
+      NITRO_HOST: 0.0.0.0
     healthcheck:
       test:
         [
           'CMD',
           'bun',
           '-e',
-          "fetch('http://localhost:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+          "fetch('http://localhost:'+(process.env.NITRO_PORT||2020)+'/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
         ]
       interval: 10s
       timeout: 3s
       retries: 5
       start_period: 10s
-
-volumes:
-  caddy_data:
-  caddy_config:

@@ -16,7 +16,8 @@ Built with **Nuxt 4** (Vue 3 `<script setup>`), **Bun**, **Tailwind CSS v4** and
 
 ## Quick start (Docker — recommended)
 
-Runs a self-contained stack: Caddy + this UI, already wired together.
+Runs **just the UI**, on the **host network**, pointed at a Caddy already running
+on the host (admin API at `localhost:2019` — Caddy's default).
 
 ```bash
 git clone https://github.com/mdmmn378/caddy-ui.git
@@ -28,15 +29,21 @@ Then open **<http://localhost:2020>** — the header should show **Connected**.
 This pulls the prebuilt image from Docker Hub (`mdmmn378/caddy-ui`), so there's
 nothing to build.
 
-> Port `2020` is used on purpose (next to Caddy's `2019`) to avoid clashing with
-> the usual `3000`/`8080` dev ports. Override with `UI_PORT`.
+> The stack uses `network_mode: host` (a Linux feature), so the container reaches
+> the host's Caddy at `localhost:2019` and the UI binds directly to host port
+> `2020` (next to Caddy's `2019`, to avoid the usual `3000`/`8080` clashes).
 
-### Drive an existing Caddy instead of the bundled one
-
-Point the UI at any Caddy admin endpoint and skip the bundled Caddy:
+**Prerequisite:** a Caddy admin endpoint reachable at `localhost:2019`. That can
+be a local Caddy, or a remote one exposed locally via an SSH tunnel:
 
 ```bash
-CADDY_ADMIN_URL=http://host.docker.internal:2019 docker compose up caddy-ui
+ssh -L 2019:localhost:2019 your-server     # then localhost:2019 -> remote Caddy
+```
+
+### Point at a different Caddy endpoint / port
+
+```bash
+CADDY_ADMIN_URL=http://10.0.0.5:2019 UI_PORT=8088 docker compose up
 ```
 
 ## Quick start (local dev)
@@ -122,8 +129,10 @@ response header, so the docs' Etag-based optimistic concurrency works end-to-end
 | `NUXT_CADDY_ADMIN_URL` | `http://localhost:2019` | Caddy admin endpoint (server-side only) |
 | `NUXT_PUBLIC_APP_NAME` | `Caddy UI`              | App name shown in the UI                |
 
-Compose-only overrides: `UI_PORT` (default `2020`), `CADDY_ADMIN_URL`,
-`CADDY_UI_IMAGE`, `APP_NAME`.
+Compose-only overrides: `UI_PORT` (default `2020`), `CADDY_ADMIN_URL`
+(default `http://localhost:2019`), `CADDY_UI_IMAGE`, `APP_NAME`. The container
+binds `0.0.0.0:$UI_PORT` on the host network — set `NITRO_HOST=127.0.0.1` (in
+`docker-compose.yml`) to restrict the UI to localhost only.
 
 ## Project structure
 
@@ -139,7 +148,7 @@ app/
     builders.ts               # build / classify / summarize routes
   pages/                      # dashboard, gateways, sites, routes, servers, config
 server/api/caddy/[...path].ts # Nitro proxy to the Caddy Admin API
-caddy/Caddyfile               # bundled-Caddy config for the compose stack
+caddy/Caddyfile               # example Caddy config (admin enabled) for reference
 ```
 
 ## Scripts
@@ -184,9 +193,11 @@ It requires two repository secrets:
 ## Security notes
 
 - Never expose Caddy's admin API (`:2019`) to untrusted networks. Keep it on
-  loopback or an internal network. The compose stack does **not** publish `:2019`.
-- This UI has no authentication. Don't expose it publicly without putting auth in
-  front of it (e.g. behind Caddy with `basic_auth` or an auth gateway).
+  loopback or behind an SSH tunnel.
+- This UI has no authentication, and with host networking it binds to all host
+  interfaces (`0.0.0.0:2020`). Don't expose it publicly without putting auth in
+  front of it (e.g. behind Caddy with `basic_auth`), or set `NITRO_HOST=127.0.0.1`
+  to keep it on localhost.
 - "Apply" on the Raw Config page replaces the **entire** running configuration.
 
 ## License
