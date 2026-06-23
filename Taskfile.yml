@@ -1,0 +1,89 @@
+# https://taskfile.dev
+version: '3'
+
+vars:
+  PM: bun
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  setup:
+    desc: Install dependencies and git hooks
+    cmds:
+      - '{{.PM}} install'
+      - task: hooks:install
+
+  install:
+    desc: Install dependencies
+    cmds:
+      - '{{.PM}} install'
+
+  dev:
+    desc: Start the dev server
+    cmds:
+      - '{{.PM}} run dev'
+
+  build:
+    desc: Build for production
+    cmds:
+      - '{{.PM}} run build'
+
+  preview:
+    desc: Preview the production build
+    cmds:
+      - '{{.PM}} run preview'
+
+  prepare:
+    desc: Generate Nuxt types (.nuxt)
+    cmds:
+      - '{{.PM}} run postinstall'
+
+  typecheck:
+    desc: Run the TypeScript type checker
+    deps: [prepare]
+    cmds:
+      - '{{.PM}} run typecheck'
+
+  lint:
+    desc: Lint the codebase
+    deps: [prepare]
+    cmds:
+      - '{{.PM}} run lint'
+
+  lint:fix:
+    desc: Lint and auto-fix
+    deps: [prepare]
+    cmds:
+      - '{{.PM}} run lint:fix'
+
+  format:
+    desc: Format the codebase with Prettier
+    cmds:
+      - '{{.PM}} run format'
+
+  format:check:
+    desc: Check formatting without writing
+    cmds:
+      - '{{.PM}} run format:check'
+
+  check:
+    desc: Run all quality gates (format, lint, typecheck)
+    deps: [prepare]
+    cmds:
+      - task: format:check
+      - task: lint
+      - task: typecheck
+
+  hooks:install:
+    desc: Install lefthook git hooks
+    cmds:
+      - '{{.PM}}x lefthook install'
+
+  clean:
+    desc: Remove build artifacts and caches
+    cmds:
+      - rm -rf .nuxt .output .nitro .cache dist node_modules/.cache

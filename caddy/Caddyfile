@@ -1,0 +1,21 @@
+# Minimal Caddy config for local development with Caddy UI.
+#
+# The global `admin` directive exposes the Admin API so the UI container can
+# reach it over the compose network. 0.0.0.0 is fine here because the port is
+# NOT published to the host in docker-compose.yml — only other services on the
+# internal network can reach it. Do NOT expose :2019 publicly in production.
+#
+# When the admin endpoint is bound to a non-loopback address, Caddy enforces an
+# allow-list of request origins (DNS-rebinding protection). The UI reaches Caddy
+# at http://caddy:2019, so that Host must be listed under `origins`.
+{
+	admin 0.0.0.0:2019 {
+		origins caddy:2019 localhost:2019 127.0.0.1:2019
+	}
+}
+
+# Start with no sites — add them from the Caddy UI. This block is just a
+# friendly placeholder so `caddy run` has something to serve on :80.
+:80 {
+	respond "Caddy is running. Configure routes from Caddy UI." 200
+}

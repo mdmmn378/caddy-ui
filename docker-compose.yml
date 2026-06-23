@@ -1,0 +1,30 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      # NOTE: the admin API (:2019) is intentionally NOT published to the host.
+      # Only caddy-ui can reach it over the internal network.
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
+  caddy-ui:
+    build: .
+    container_name: caddy-ui
+    restart: unless-stopped
+    environment:
+      NUXT_CADDY_ADMIN_URL: http://caddy:2019
+      NUXT_PUBLIC_APP_NAME: Caddy UI
+    ports:
+      - '3000:3000'
+    depends_on:
+      - caddy
+
+volumes:
+  caddy_data:
+  caddy_config:
