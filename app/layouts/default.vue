@@ -5,6 +5,7 @@ import {
   Globe,
   Signpost,
   Server,
+  Lock,
   Braces,
   ShieldCheck,
 } from 'lucide-vue-next'
@@ -18,6 +19,7 @@ const nav = [
   { to: '/sites', label: 'Static Sites', icon: Globe },
   { to: '/routes', label: 'Routes', icon: Signpost },
   { to: '/servers', label: 'Servers', icon: Server },
+  { to: '/tls', label: 'TLS & DNS', icon: Lock },
   { to: '/config', label: 'Raw Config', icon: Braces },
 ]
 

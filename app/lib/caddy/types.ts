@@ -23,7 +23,57 @@ export interface AdminConfig {
 
 export interface AppsConfig {
   http?: HttpApp
-  tls?: Record<string, unknown>
+  tls?: TlsApp
+  [key: string]: unknown
+}
+
+/* -------------------------------------------------------------------------- */
+/*  TLS app — certificate automation (ACME), incl. DNS-01 challenge providers  */
+/*  like Cloudflare. https://caddyserver.com/docs/json/apps/tls/               */
+/* -------------------------------------------------------------------------- */
+
+export interface TlsApp {
+  automation?: TlsAutomation
+  certificates?: Record<string, unknown>
+  [key: string]: unknown
+}
+
+export interface TlsAutomation {
+  policies?: AutomationPolicy[]
+  [key: string]: unknown
+}
+
+export interface AutomationPolicy {
+  /** Domain patterns this policy applies to. Empty = all certificates. */
+  subjects?: string[]
+  issuers?: Issuer[]
+  [key: string]: unknown
+}
+
+export interface Issuer {
+  module: string // 'acme' | 'zerossl' | 'internal' | ...
+  challenges?: {
+    dns?: DnsChallenge
+    [key: string]: unknown
+  }
+  [key: string]: unknown
+}
+
+export interface DnsChallenge {
+  provider?: DnsProvider
+  /** DNS resolvers to use when checking propagation, e.g. ["1.1.1.1"]. */
+  resolvers?: string[]
+  [key: string]: unknown
+}
+
+/**
+ * DNS provider for the ACME DNS-01 challenge. `name` selects the caddy-dns
+ * module (e.g. "cloudflare"); the remaining fields are provider-specific
+ * (Cloudflare uses `api_token`). Requires Caddy built with that DNS plugin.
+ */
+export interface DnsProvider {
+  name: string
+  api_token?: string
   [key: string]: unknown
 }
 
@@ -196,4 +246,18 @@ export interface ServerSummary {
   routeCount: number
   httpsDisabled: boolean
   raw: HttpServer
+}
+
+export interface TlsPolicySummary {
+  index: number
+  subjects: string[]
+  /** 'cloudflare' (or another caddy-dns provider) when a DNS-01 challenge is set. */
+  dnsProvider: string | null
+  challenge: 'dns' | 'default'
+  resolvers: string[]
+  /** Masked representation of the provider token, for display only. */
+  tokenMasked: string | null
+  /** True when the token is an `{env.X}` placeholder rather than a literal. */
+  tokenFromEnv: boolean
+  raw: AutomationPolicy
 }

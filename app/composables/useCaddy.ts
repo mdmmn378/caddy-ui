@@ -1,6 +1,15 @@
 import { caddyApi } from '@/lib/caddy/client'
-import { summarizeRoute } from '@/lib/caddy/builders'
-import type { CaddyConfig, HttpServer, Route, RouteSummary, ServerSummary } from '@/lib/caddy/types'
+import { summarizeRoute, summarizeTlsPolicy } from '@/lib/caddy/builders'
+import type {
+  CaddyConfig,
+  HttpServer,
+  Route,
+  RouteSummary,
+  ServerSummary,
+  AutomationPolicy,
+  TlsAutomation,
+  TlsPolicySummary,
+} from '@/lib/caddy/types'
 
 const DEFAULT_SERVER = 'srv0'
 
@@ -186,6 +195,45 @@ export function useCaddy() {
     await refresh()
   }
 
+  /* ---------------------------------------------------------------------- */
+  /*  TLS automation policies (ACME DNS-01 providers, e.g. Cloudflare)      */
+  /*                                                                        */
+  /*  The `tls` app is frequently absent entirely, so granular endpoints    */
+  /*  (which fail on missing parents) are a poor fit. We read-modify-write   */
+  /*  the full config via POST /load instead — atomic and preserves the     */
+  /*  rest of the config untouched.                                          */
+  /* ---------------------------------------------------------------------- */
+
+  const tlsPolicies = computed<TlsPolicySummary[]>(() => {
+    const policies = config.value?.apps?.tls?.automation?.policies ?? []
+    return policies.map((p, i) => summarizeTlsPolicy(i, p))
+  })
+
+  function ensureAutomation(d: CaddyConfig): TlsAutomation {
+    d.apps ??= {}
+    d.apps.tls ??= {}
+    d.apps.tls.automation ??= {}
+    d.apps.tls.automation.policies ??= []
+    return d.apps.tls.automation
+  }
+
+  /** Create a policy (index = null) or replace an existing one by index. */
+  async function upsertTlsPolicy(index: number | null, policy: AutomationPolicy): Promise<void> {
+    const d = draft()
+    const automation = ensureAutomation(d)
+    if (index === null) automation.policies!.push(policy)
+    else automation.policies![index] = policy
+    await save(d)
+  }
+
+  async function deleteTlsPolicy(index: number): Promise<void> {
+    const d = draft()
+    const policies = d.apps?.tls?.automation?.policies
+    if (!policies) return
+    policies.splice(index, 1)
+    await save(d)
+  }
+
   return {
     // state
     config,
@@ -200,6 +248,7 @@ export function useCaddy() {
     gateways,
     sites,
     redirects,
+    tlsPolicies,
     // actions
     refresh,
     save,
@@ -210,6 +259,8 @@ export function useCaddy() {
     findRoute,
     upsertServer,
     deleteServer,
+    upsertTlsPolicy,
+    deleteTlsPolicy,
     DEFAULT_SERVER,
   }
 }

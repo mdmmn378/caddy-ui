@@ -7,6 +7,10 @@ import type {
   ReverseProxyHandler,
   FileServerHandler,
   StaticResponseHandler,
+  AutomationPolicy,
+  Issuer,
+  DnsProvider,
+  TlsPolicySummary,
 } from './types'
 
 /** Generate a stable, human-ish id used as the route `@id`. */
@@ -227,5 +231,77 @@ export function summarizeRoute(serverName: string, index: number, route: Route):
     target,
     upstreams,
     raw: route,
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  TLS automation — DNS-01 challenge providers (e.g. Cloudflare)              */
+/* -------------------------------------------------------------------------- */
+
+export interface CloudflareDnsInput {
+  subjects: string[]
+  /** Literal token, or an `{env.NAME}` placeholder (see `tokenFromEnv`). */
+  apiToken: string
+  resolvers?: string[]
+}
+
+/** True for `{env.SOMETHING}` placeholder tokens. */
+export function isEnvPlaceholder(value: string | undefined): boolean {
+  return !!value && /^\{env\.[^}]+\}$/.test(value)
+}
+
+/** Mask a literal token for display: keep the last 4 chars. */
+export function maskToken(value: string | undefined): string | null {
+  if (!value) return null
+  if (isEnvPlaceholder(value)) return value
+  if (value.length <= 4) return '••••'
+  return `••••${value.slice(-4)}`
+}
+
+/**
+ * Build a TLS automation policy that obtains certificates for `subjects` using
+ * the ACME DNS-01 challenge via the Cloudflare DNS provider. Requires Caddy to
+ * be built with the `caddy-dns/cloudflare` plugin.
+ */
+export function buildCloudflarePolicy(input: CloudflareDnsInput): AutomationPolicy {
+  const provider: DnsProvider = { name: 'cloudflare', api_token: input.apiToken }
+  const issuer: Issuer = {
+    module: 'acme',
+    challenges: { dns: { provider } },
+  }
+  const resolvers = (input.resolvers ?? []).filter(Boolean)
+  if (resolvers.length) issuer.challenges!.dns!.resolvers = resolvers
+
+  const policy: AutomationPolicy = { issuers: [issuer] }
+  if (input.subjects.length) policy.subjects = input.subjects
+  return policy
+}
+
+/** Find the DNS provider configured on a policy, if any. */
+export function dnsProviderOf(policy: AutomationPolicy): DnsProvider | undefined {
+  for (const issuer of policy.issuers ?? []) {
+    const provider = issuer.challenges?.dns?.provider
+    if (provider) return provider
+  }
+  return undefined
+}
+
+export function summarizeTlsPolicy(index: number, policy: AutomationPolicy): TlsPolicySummary {
+  const provider = dnsProviderOf(policy)
+  const token = provider?.api_token
+  let resolvers: string[] = []
+  for (const issuer of policy.issuers ?? []) {
+    const r = issuer.challenges?.dns?.resolvers
+    if (Array.isArray(r)) resolvers = r
+  }
+  return {
+    index,
+    subjects: policy.subjects ?? [],
+    dnsProvider: provider?.name ?? null,
+    challenge: provider ? 'dns' : 'default',
+    resolvers,
+    tokenMasked: maskToken(token),
+    tokenFromEnv: isEnvPlaceholder(token),
+    raw: policy,
   }
 }
