@@ -1,0 +1,35 @@
+app/lib/caddy/types.ts
+  s_c232bd01a8f605::t_4e40694fc33160 64-65
+  s_c232bd01a8f605::t_e91e90c28019f3 26-63,66-76
+  s_c232bd01a8f605::t_ce32f9bc4e8c01 250-263
+app/layouts/default.vue
+  s_c232bd01a8f605::t_d5ca050a745c67 8,22
+app/pages/tls.vue
+  s_c232bd01a8f605::t_1732a2b98d9ab8 1-147
+app/components/app/CloudflareDialog.vue
+  s_c232bd01a8f605::t_3fb7b3f1ae264c 17-22,66-68,146-149
+  s_c232bd01a8f605::t_2506fd081aa8e5 1-16,23-65,69-145,150-162
+app/lib/caddy/builders.ts
+  s_c232bd01a8f605::t_a2369effaccea8 236-307
+  s_c232bd01a8f605::t_f048f743a5557b 10-13
+app/composables/useCaddy.ts
+  s_c232bd01a8f605::t_5b54037ff6bf62 251,262-263
+  s_c232bd01a8f605::t_bdb9a3c4414871 2-12
+  s_c232bd01a8f605::t_099bd4bb50d619 198-236
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "501e962b89bb2387f620b170adab878ddca9797a",
+  "prompts": {},
+  "sessions": {
+    "s_c232bd01a8f605": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "420a878e-fc48-494a-a157-eb4b0cef0a2a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Mamunur Rahamn Mamun <mdmmn378@gmail.com>"
+    }
+  }
+}
