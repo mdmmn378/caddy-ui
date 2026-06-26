@@ -1,15 +1,7 @@
 <script setup lang="ts">
-import {
-  LayoutDashboard,
-  Waypoints,
-  Globe,
-  Signpost,
-  Server,
-  Lock,
-  Braces,
-  ShieldCheck,
-} from 'lucide-vue-next'
+import { LayoutDashboard, Waypoints, Globe, Signpost, Server, Lock, Braces } from 'lucide-vue-next'
 import { Separator } from '@/components/ui/separator'
+import AppLogo from '@/components/app/Logo.vue'
 import AppConnectionStatus from '@/components/app/ConnectionStatus.vue'
 import AppThemeToggle from '@/components/app/ThemeToggle.vue'
 
@@ -37,7 +29,7 @@ const appName = config.public.appName
         <div
           class="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md"
         >
-          <ShieldCheck class="size-5" />
+          <AppLogo class="size-5" />
         </div>
         <span class="text-sm font-semibold tracking-tight">{{ appName }}</span>
       </div>
@@ -64,7 +56,14 @@ const appName = config.public.appName
       <header
         class="bg-background/80 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30 flex h-14 items-center gap-3 border-b px-4 backdrop-blur md:px-6"
       >
-        <span class="text-sm font-semibold md:hidden">{{ appName }}</span>
+        <span class="flex items-center gap-2 text-sm font-semibold md:hidden">
+          <span
+            class="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md"
+          >
+            <AppLogo class="size-4" />
+          </span>
+          {{ appName }}
+        </span>
         <div class="ml-auto flex items-center gap-2">
           <AppConnectionStatus />
           <AppThemeToggle />
