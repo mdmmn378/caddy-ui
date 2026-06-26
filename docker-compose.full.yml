@@ -1,0 +1,92 @@
+# Full stack: Caddy (built with the caddy-dns/cloudflare plugin, persistent) +
+# the Caddy UI, on a private bridge network.
+#
+#   docker compose -f docker-compose.full.yml up --build
+#
+# Then open http://localhost:2020 — the header should show "Connected".
+#
+# Unlike the default docker-compose.yml (which only runs the UI against a Caddy
+# you already run on the host), this file brings up Caddy itself and PERSISTS
+# its config, so anything you create in the UI survives restarts.
+#
+# Persistence is two parts, both handled below:
+#   1. `caddy run ... --resume` reloads the last config the Admin API autosaved
+#      (everything you do in the UI) instead of re-reading the Caddyfile on boot.
+#   2. The /config and /data dirs are named volumes, so that autosave (and the
+#      issued TLS certificates) survive `docker compose down` and upgrades.
+#
+# Overrides (env vars, or a .env file next to this one):
+#   UI_PORT               host port the UI binds            (default 2020)
+#   APP_NAME              app name shown in the UI          (default Caddy UI)
+#   CADDY_IMAGE           tag for the locally built Caddy   (default caddy-cloudflare:latest)
+#   CADDY_UI_IMAGE        UI image/tag                      (default mdmmn378/caddy-ui:latest)
+#   CLOUDFLARE_API_TOKEN  passed to Caddy for DNS-01        (optional)
+
+services:
+  caddy:
+    build:
+      context: ./caddy
+    image: ${CADDY_IMAGE:-caddy-cloudflare:latest}
+    container_name: caddy
+    restart: unless-stopped
+    # --resume: on every boot, load the config the Admin API last autosaved to
+    # /config/caddy/autosave.json (i.e. what you built in the UI). The Caddyfile
+    # is used only on the FIRST boot, before any autosave exists.
+    command: ['caddy', 'run', '--config', '/etc/caddy/Caddyfile', '--resume']
+    environment:
+      # Optional: lets DNS-01 automation policies reference the token via
+      # {env.CLOUDFLARE_API_TOKEN} instead of storing it in the saved config.
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp' # HTTP/3 (QUIC)
+      # NOTE: :2019 (Admin API) is deliberately NOT published — only the UI
+      # container reaches it over the internal network.
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro # first-boot template
+      - caddy_data:/data # issued certificates & ACME account state
+      - caddy_config:/config # autosave.json — the persisted live config
+    healthcheck:
+      # Admin API answers on the loopback origin allow-listed in the Caddyfile.
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:2019/config/']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  caddy-ui:
+    # Build the UI from local source (includes local changes like the Cloudflare
+    # TLS page). Drop the `build:` block to pull the published image instead.
+    build:
+      context: .
+    image: ${CADDY_UI_IMAGE:-mdmmn378/caddy-ui:latest}
+    container_name: caddy-ui
+    restart: unless-stopped
+    depends_on:
+      caddy:
+        condition: service_healthy
+    environment:
+      # Reach Caddy by its compose service name over the internal network.
+      NUXT_CADDY_ADMIN_URL: http://caddy:2019
+      NUXT_PUBLIC_APP_NAME: ${APP_NAME:-Caddy UI}
+      NITRO_PORT: '2020'
+      NITRO_HOST: 0.0.0.0
+    ports:
+      - '${UI_PORT:-2020}:2020'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'bun',
+          '-e',
+          "fetch('http://localhost:2020/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -59,6 +59,35 @@ bun run dev                # http://localhost:3000
 
 Or with [Task](https://taskfile.dev): `task setup && task dev`.
 
+## Full stack (Caddy + UI, with persistence)
+
+The default `docker-compose.yml` runs **only the UI** against a Caddy you manage
+yourself. If you want the whole thing — Caddy **and** the UI — with config that
+survives restarts, use `docker-compose.full.yml`:
+
+```bash
+docker compose -f docker-compose.full.yml up --build
+```
+
+Then open **<http://localhost:2020>**. This stack:
+
+- builds Caddy with the **`caddy-dns/cloudflare`** plugin (`caddy/Dockerfile`),
+  so the **TLS & DNS** page can issue wildcard certs via DNS-01;
+- starts Caddy with **`--resume`**, so every change you make in the UI is
+  reloaded on restart instead of being thrown away for the startup Caddyfile;
+- persists Caddy's `/config` (the autosaved live config) and `/data`
+  (certificates) in named volumes, so config and certs survive
+  `docker compose down` and upgrades;
+- loads `caddy/Caddyfile` as the **first-boot template** only (once an autosave
+  exists, `--resume` uses that and the Caddyfile is ignored).
+
+For Cloudflare DNS-01 without storing the token in the config, pass it through
+and reference `{env.CLOUDFLARE_API_TOKEN}` from the UI:
+
+```bash
+CLOUDFLARE_API_TOKEN=cf_xxx docker compose -f docker-compose.full.yml up --build
+```
+
 ## Features
 
 - **Dashboard** — counts of gateways/sites/redirects/servers and recent routes.
@@ -110,8 +139,14 @@ response header, so the docs' Etag-based optimistic concurrency works end-to-end
 ## Good to know
 
 - **No restart needed.** Saving applies immediately via Caddy's graceful reload.
-  Invalid config is rejected and rolled back (the error shows in a toast). Caddy
-  also auto-persists the new config to disk.
+  Invalid config is rejected and rolled back (the error shows in a toast).
+- **Surviving a Caddy restart.** Caddy autosaves every API change to
+  `autosave.json`, but a plain `caddy run` **ignores** it on boot and reloads
+  its startup Caddyfile — so UI changes vanish on restart unless Caddy is started
+  with `--resume` **and** its config dir is persistent. The
+  [full-stack compose](#full-stack-caddy--ui-with-persistence) below does both;
+  for an existing Caddy, start it with `caddy run --resume` (systemd: add
+  `--resume` to `ExecStart`).
 - **Static sites serve files from where _Caddy_ runs**, not from your browser's
   machine. If Caddy is on a remote host, the site root must exist and be readable
   **on that host** by Caddy's user. A `403` from a `file_server` almost always
