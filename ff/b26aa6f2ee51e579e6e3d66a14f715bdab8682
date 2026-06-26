@@ -1,0 +1,27 @@
+README.md
+  s_530e11c79d3a12::t_8ee59a3d4a9fd4 142-149
+  s_530e11c79d3a12::t_4e09ba505d9a73 62-90
+caddy/Dockerfile
+  s_530e11c79d3a12::t_e515a6512220e8 1-16
+docker-compose.full.yml
+  s_530e11c79d3a12::t_bd4b4403d0e0b6 1-58,63-92
+  s_530e11c79d3a12::t_9eb282b06cb678 59-62
+caddy/Caddyfile
+  s_530e11c79d3a12::t_a83cfef452cf13 1-9,13-14,27-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "ffb26aa6f2ee51e579e6e3d66a14f715bdab8682",
+  "prompts": {},
+  "sessions": {
+    "s_530e11c79d3a12": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dba37f2a-114d-4f45-834d-74bc3ee157ef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Mamunur Rahamn Mamun <mdmmn378@gmail.com>"
+    }
+  }
+}
