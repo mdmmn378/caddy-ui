@@ -1,0 +1,28 @@
+nuxt.config.ts
+  s_530e11c79d3a12::t_181435aec7232c 37
+app/components/app/Logo.vue
+  s_530e11c79d3a12::t_a81b6e7ec52855 1-33
+  s_530e11c79d3a12::t_8d22401094eea1 34-35
+public/favicon.svg
+  s_530e11c79d3a12::t_a85473077855b5 1,3-17
+  s_530e11c79d3a12::t_46f60dc3be9370 2
+app/layouts/default.vue
+  s_530e11c79d3a12::t_303c664337a9de 60-66
+  s_530e11c79d3a12::t_49394ea58b657d 59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "1263456a6e7f4b26fdcde64ab7a0da3e1bec7da0",
+  "prompts": {},
+  "sessions": {
+    "s_530e11c79d3a12": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dba37f2a-114d-4f45-834d-74bc3ee157ef",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Mamunur Rahamn Mamun <mdmmn378@gmail.com>"
+    }
+  }
+}
